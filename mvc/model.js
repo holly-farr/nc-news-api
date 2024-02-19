@@ -5,3 +5,4 @@ exports.readAllTopics = () => {
     return response.rows;
   });
 };
+ 
