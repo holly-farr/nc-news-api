@@ -4,6 +4,8 @@ const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data/index.js");
 const apiEndPointsJSON = require("../endpoints.json");
+const { getArticleById } = require("../mvc/controller.js");
+const article = require("../db/data/test-data/articles.js");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -39,12 +41,12 @@ describe("App", () => {
         .expect(200)
         .then((response) => {
           const body = response.body;
-          const topicsArr = body.topics;
-          for (const topicObj in topicsArr) {
-            return topicObj;
-          }
-          const topicObjKeys = ["slug", "description"];
-          expect(Object.keys(topicsArr[topicObj])).toBe(topicObjKeys);
+          body.topics.forEach((topic) => {
+            expect(topic).toMatchObject({
+              slug: expect.any(String),
+              description: expect.any(String),
+            });
+          });
         });
     });
     test("should return 404 status and message of 'path not found' if url is inputted incorrectly", () => {
@@ -69,6 +71,75 @@ describe("App", () => {
           const body = response.body;
           const output = apiEndPointsJSON;
           expect(body.endpoints).toEqual(output);
+        });
+    });
+  });
+  describe("GET /api/articles/:article_id", () => {
+    test("should return article object when given an article id", () => {
+      const articleId = 3;
+      return request(app)
+        .get(`/api/articles/${articleId}`)
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          const expectedOut = {
+            article_id: 3,
+            title: "Eight pug gifs that remind me of mitch",
+            topic: "mitch",
+            author: "icellusedkars",
+            body: "some gifs",
+            created_at: "2020-11-03T09:12:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          };
+          expect(body.article[0]).toMatchObject(expectedOut);
+        });
+    });
+    test("should return article object with id that matches given id", () => {
+      const articleId = 4;
+      return request(app)
+        .get(`/api/articles/${articleId}`)
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          const articleArr = body.article;
+          expect(articleArr[0].article_id).toEqual(4);
+        });
+    })
+    test("should return article object with correct properties", () => {
+      const articleId = 4;
+      return request(app)
+        .get(`/api/articles/${articleId}`)
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          expect(body.article[0]).toHaveProperty("article_id");
+          expect(body.article[0]).toHaveProperty("article_img_url");
+          expect(body.article[0]).toHaveProperty("author");
+          expect(body.article[0]).toHaveProperty("body");
+          expect(body.article[0]).toHaveProperty("created_at");
+          expect(body.article[0]).toHaveProperty("title");
+          expect(body.article[0]).toHaveProperty("topic");
+          expect(body.article[0]).toHaveProperty("votes");
+        });
+    });
+    test("should return 400 status and message of 'bad request' if anything but an id is inputted", () => {
+      return request(app)
+        .get(`/api/articles/hello9`)
+        .expect(400)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test.only("should return 404 status and message of 'not found' if the article does not exist", () => {
+      return request(app)
+        .get(`/api/articles/9999999`)
+        .expect(404)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toBe("not found");
         });
     });
   });
