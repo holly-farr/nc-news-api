@@ -1,4 +1,5 @@
-const { readAllTopics } = require("../mvc/model");
+const { readAllTopics, readAllEndpoints } = require("../mvc/model");
+const endpoints = require("../endpoints.json");
 
 exports.getAllTopics = (req, res, next) => {
   readAllTopics()
@@ -8,4 +9,8 @@ exports.getAllTopics = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
-}; 
+};
+
+exports.getAllEndpoints = (req, res) => {
+  res.status(200).send({ endpoints: endpoints });
+};
