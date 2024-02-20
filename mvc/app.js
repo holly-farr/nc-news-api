@@ -1,19 +1,16 @@
 const express = require("express");
 const app = express();
-const { getAllTopics } = require("../mvc/controller");
-const { handle404Errors, handleServerErrors } = require("../mvc/middleware");
-
-app.use(express.json());
-
-app.get("/api/healthcheck", (req, res) => {
-  res.status(200).send({msg: "healthcheck passed"});
-});
+const { getAllTopics, getAllEndpoints } = require("../mvc/controller");
+const { handleServerErrors } = require("../mvc/middleware");
 
 app.get("/api/topics", getAllTopics);
 
-app.all("/*", handle404Errors);
+app.get("/api", getAllEndpoints);
 
-app.all("/*", handleServerErrors);
+app.use("/*", (req, res) => {
+  res.status(404).send({ msg: "path not found" });
+});
+
+app.use(handleServerErrors);
 
 module.exports = app;
- 
