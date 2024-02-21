@@ -1,5 +1,6 @@
-const { readAllTopics, readArticleById } = require("../mvc/model");
+const { readAllTopics, readAllArticles, readArticleById } = require("../mvc/model");
 const endpoints = require("../endpoints.json");
+
 
 exports.getAllTopics = (req, res, next) => {
   readAllTopics()
@@ -10,6 +11,15 @@ exports.getAllTopics = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getAllArticles = (req, res, next) => {
+  readAllArticles().then((articles)=>{
+    res.status(200).send({articles: articles})
+  })
+  .catch((err)=>{
+    next(err)
+  })
+}
 
 exports.getArticleById = (req, res, next) => {
   const article_id = req.params.article_id
@@ -24,4 +34,4 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getAllEndpoints = (req, res) => {
   res.status(200).send({ endpoints: endpoints });
-};
+}

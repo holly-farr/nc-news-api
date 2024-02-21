@@ -4,8 +4,7 @@ const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data/index.js");
 const apiEndPointsJSON = require("../endpoints.json");
-const { getArticleById } = require("../mvc/controller.js");
-const article = require("../db/data/test-data/articles.js");
+const { toBeSorted, toBeSortedBy } = require("jest-sorted");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -106,7 +105,7 @@ describe("App", () => {
           const articleArr = body.article;
           expect(articleArr[0].article_id).toEqual(4);
         });
-    })
+    });
     test("should return article object with correct properties", () => {
       const articleId = 4;
       return request(app)
@@ -133,13 +132,67 @@ describe("App", () => {
           expect(body.msg).toBe("bad request");
         });
     });
-    test.only("should return 404 status and message of 'not found' if the article does not exist", () => {
+    test("should return 404 status and message of 'not found' if the article does not exist", () => {
       return request(app)
         .get(`/api/articles/9999999`)
         .expect(404)
         .then((response) => {
           const body = response.body;
           expect(body.msg).toBe("not found");
+        });
+    });
+  });
+  describe.only("GET /api/articles", () => {
+    test("should return array containing all article objects", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          expect(Array.isArray(body.articles)).toBe(true);
+          expect(body.articles.length).toBe(13);
+        });
+    });
+    test("article objects should have correct keys", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          body.articles.forEach((article) => {
+            expect(article).toMatchObject({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+    test("article objects should be sorted by created_at date in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    test("article does not have body", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          const articlesArr = response.body.articles;
+          articlesArr.forEach((article) => {
+            expect(article).not.toHaveProperty("body");
+          });
         });
     });
   });
