@@ -33,7 +33,27 @@ exports.readArticleById = (article_id) => {
     .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "not found" });
+        return Promise.reject({
+          status: 404,
+          msg: `no article found for article_id: ${article_id}`,
+        });
+      }
+      return rows;
+    });
+};
+
+exports.readCommentsByArticleId = (article_id) => {
+  return db
+    .query(
+      "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;",
+      [article_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `no comments found for article_id: ${article_id}`,
+        });
       }
       return rows;
     });
