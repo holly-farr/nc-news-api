@@ -1,13 +1,15 @@
 const express = require("express");
 const app = express();
-const { getAllTopics, getAllEndpoints, getArticleById } = require("../mvc/controller");
+const { getAllTopics, getAllEndpoints, getAllArticles, getArticleById } = require("../mvc/controller");
 const { handleServerErrors, invalidId, idNotFound } = require("../mvc/middleware");
-
-app.get("/api/topics", getAllTopics);
 
 app.get("/api", getAllEndpoints);
 
-app.get("/api/articles/:article_id", getArticleById)
+app.get("/api/topics", getAllTopics);
+
+app.get("/api/articles", getAllArticles);
+
+app.get("/api/articles/:article_id", getArticleById);
 
 app.use("/*", (req, res) => {
   res.status(404).send({ msg: "path not found" });
