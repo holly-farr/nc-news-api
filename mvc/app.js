@@ -1,7 +1,13 @@
 const express = require("express");
 const app = express();
-const { getAllTopics, getAllEndpoints, getAllArticles, getArticleById } = require("../mvc/controller");
-const { handleServerErrors, invalidId, idNotFound } = require("../mvc/middleware");
+const {
+  getAllTopics,
+  getAllEndpoints,
+  getAllArticles,
+  getArticleById,
+  getCommentsByArticleId,
+} = require("../mvc/controller");
+const { psqlErrors, serverErrors, customErrors } = require("../mvc/middleware");
 
 app.get("/api", getAllEndpoints);
 
@@ -11,14 +17,16 @@ app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
 app.use("/*", (req, res) => {
   res.status(404).send({ msg: "path not found" });
 });
 
-app.use(invalidId)
+app.use(psqlErrors);
 
-app.use(idNotFound)
+app.use(customErrors);
 
-app.use(handleServerErrors);
+app.use(serverErrors);
 
 module.exports = app;

@@ -1,6 +1,10 @@
-const { readAllTopics, readAllArticles, readArticleById } = require("../mvc/model");
+const {
+  readAllTopics,
+  readAllArticles,
+  readArticleById,
+  readCommentsByArticleId,
+} = require("../mvc/model");
 const endpoints = require("../endpoints.json");
-
 
 exports.getAllTopics = (req, res, next) => {
   readAllTopics()
@@ -13,16 +17,17 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  readAllArticles().then((articles)=>{
-    res.status(200).send({articles: articles})
-  })
-  .catch((err)=>{
-    next(err)
-  })
-}
+  readAllArticles()
+    .then((articles) => {
+      res.status(200).send({ articles: articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
 exports.getArticleById = (req, res, next) => {
-  const article_id = req.params.article_id
+  const article_id = req.params.article_id;
   readArticleById(article_id)
     .then((article) => {
       res.status(200).send({ article: article });
@@ -32,6 +37,17 @@ exports.getArticleById = (req, res, next) => {
     });
 };
 
+exports.getCommentsByArticleId = (req, res, next) => {
+  const article_id = req.params.article_id;
+  readCommentsByArticleId(article_id)
+    .then((comments) => {
+      res.status(200).send({ comments: comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 exports.getAllEndpoints = (req, res) => {
   res.status(200).send({ endpoints: endpoints });
-}
+};
