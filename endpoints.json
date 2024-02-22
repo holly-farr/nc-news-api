@@ -30,16 +30,18 @@
     "description": "serves a single article when given an article id",
     "queries": [1, 2, 3],
     "exampleResponse": {
-      "article": [{
-        "article_id": 1,
-        "title": "Running a Node App",
-        "topic": "coding",
-        "author": "jessjelly",
-        "body": "Text from the article..",
-        "created_at": 1604728980000,
-        "votes": 0,
-        "article_img_url": "Image url.."
-      }]
+      "article": [
+        {
+          "article_id": 1,
+          "title": "Running a Node App",
+          "topic": "coding",
+          "author": "jessjelly",
+          "body": "Text from the article..",
+          "created_at": 1604728980000,
+          "votes": 0,
+          "article_img_url": "Image url.."
+        }
+      ]
     }
   },
   "GET /api/articles/:article_id/comments": {
@@ -65,6 +67,17 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts and serves a single user comment for a specified article when provided with an article id, username and body",
+    "queries": [1, { "username": "icellusedkars", "body": "spiffing cup of tea m'lady" } ],
+    "exampleResponse": {
+      "comment_id": 19,
+      "body": "spiffing cup of tea m'lady",
+      "article_id": 2,
+      "author": "icellusedkars",
+      "votes": 0,
+      "created_at": "2024-02-22T17:01:06.345Z"
+    }
   }
-  
 }
