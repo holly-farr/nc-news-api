@@ -267,7 +267,7 @@ describe("App GET", () => {
   });
 });
 
-describe.only("App POST", () => {
+describe("App POST", () => {
   describe("POST /api/articles/:article_id/comments", () => {
     test("should return 201 status and created comment", () => {
       const article_id = 2;
@@ -280,10 +280,17 @@ describe.only("App POST", () => {
         .expect(201)
         .then((response) => {
           const comment = response.body.comment;
-          const expectedComment = "spiffing cup of tea m'lady";
-          expect(comment.body).toBe(expectedComment);
-        });
-    });
+          const expectedComment = {
+            comment_id: 19,
+            body: "spiffing cup of tea m'lady",
+            article_id: 2,
+            author: 'icellusedkars',
+            votes: 0,
+            created_at: expect.any(String)
+          }
+          expect(comment).toEqual(expectedComment)
+        })
+    })
     test("should ignore any extra properties on inputted object", () => {
       const article_id = 1;
       return request(app)
