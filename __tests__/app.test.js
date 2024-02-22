@@ -196,7 +196,7 @@ describe("App GET", () => {
         });
     });
   });
-  describe.only("GET /api/articles/:article_id/comments", () => {
+  describe("GET /api/articles/:article_id/comments", () => {
     test("should return array of comment objects with correct article id and properties", () => {
       const article_id = 1;
       return request(app)
@@ -258,6 +258,109 @@ describe("App GET", () => {
       const article_id = 90999;
       return request(app)
         .get(`/api/articles/${article_id}/comments`)
+        .expect(404)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toEqual("not found");
+        });
+    });
+  });
+});
+
+describe.only("App POST", () => {
+  describe("POST /api/articles/:article_id/comments", () => {
+    test("should return 201 status and created comment", () => {
+      const article_id = 2;
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send({
+          username: "icellusedkars",
+          body: "spiffing cup of tea m'lady",
+        })
+        .expect(201)
+        .then((response) => {
+          const comment = response.body.comment;
+          const expectedComment = "spiffing cup of tea m'lady";
+          expect(comment.body).toBe(expectedComment);
+        });
+    });
+    test("should ignore any extra properties on inputted object", () => {
+      const article_id = 1;
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send({
+          username: "icellusedkars",
+          body: "spiffing cup of tea m'lady",
+          votes: 2,
+          edits: "stirred not shaken",
+        })
+        .expect(201)
+        .then((response) => {
+          const comment = response.body.comment;
+          const expectedComment = "spiffing cup of tea m'lady";
+          const expectedObj = {
+            comment_id: expect.any(Number),
+            body: "spiffing cup of tea m'lady",
+            article_id: 1,
+            author: "icellusedkars",
+            votes: 0,
+            created_at: expect.any(String),
+          };
+          expect(comment.body).toBe(expectedComment);
+          expect(comment).toMatchObject(expectedObj);
+          expect(comment).not.toHaveProperty("edits");
+        });
+    });
+    test("should return 400 status and 'bad request' message if invalid username is inputted", () => {
+      const article_id = 2;
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send({
+          username: "chelsea_brit",
+          body: "spiffing cup of tea m'lady",
+        })
+        .expect(404)
+        .then((response) => {
+          const body = response.body;
+          const expectedOutput = "not found";
+          expect(body.msg).toBe(expectedOutput);
+        });
+    });
+    test("should return 400 status and 'bad request' message if username or body are missing", () => {
+      const article_id = 2;
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send({
+          body: "spiffing cup of tea m'lady",
+        })
+        .expect(400)
+        .then((response) => {
+          const body = response.body;
+          const expectedOutput = "bad request";
+          expect(body.msg).toBe(expectedOutput);
+        });
+    });
+    test("should return 404 status and error message if no article_id is provided", () => {
+      return request(app)
+        .post(`/api/articles/:article_id/comments`)
+        .send({
+          body: "spiffing cup of tea m'lady",
+        })
+        .expect(400)
+        .then((response) => {
+          const body = response.body;
+          const expectedOutput = "bad request";
+          expect(body.msg).toBe(expectedOutput);
+        });
+    });
+    test("should return status 404 and error message if article does not exist", () => {
+      const article_id = 999099;
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send({
+          username: "icellusedkars",
+          body: "spiffing cup of tea m'lady",
+        })
         .expect(404)
         .then((response) => {
           const body = response.body;

@@ -26,6 +26,9 @@ app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
+
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "path not found" });
 });

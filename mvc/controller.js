@@ -49,6 +49,20 @@ exports.getCommentsByArticleId = (req, res, next) => {
     });
 };
 
+exports.postCommentByArticleId = (req, res, next) => {
+  const article_id = req.params.article_id
+  const newComment = req.body;
+  return Promise.all([readArticleById(article_id), insertCommentByArticleId(article_id, newComment)])
+    .then((comment) => {
+      res.status(201).send({ comment: comment[1] });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+
+
 exports.getAllEndpoints = (req, res) => {
   res.status(200).send({ endpoints: endpoints });
 };
