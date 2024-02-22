@@ -69,8 +69,8 @@
     }
   },
   "POST /api/articles/:article_id/comments": {
-    "description": "posts and serves a single user comment for a specified article when provided with an article id, username and body",
-    "queries": [1, { "username": "icellusedkars", "body": "spiffing cup of tea m'lady" } ],
+    "description": "serves new user comment for a specified article when provided with an article id, username and body",
+    "queries": [ 1, { "username": "icellusedkars", "body": "spiffing cup of tea m'lady" } ],
     "exampleResponse": {
       "comment_id": 19,
       "body": "spiffing cup of tea m'lady",
@@ -78,6 +78,19 @@
       "author": "icellusedkars",
       "votes": 0,
       "created_at": "2024-02-22T17:01:06.345Z"
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "serves article with updated vote count when provided with article id and increment vote",
+    "queries": [ 1, { "inc_vote": 5} ],
+    "exampleResponse": {
+      "title": "Living in the shadow of a great man",
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "body": "I find this existence challenging",
+      "created_at": 1594329060000,
+      "votes": 105,
+      "article_img_url": "Image url.."
     }
   }
 }
