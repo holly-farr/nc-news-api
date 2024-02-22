@@ -284,13 +284,13 @@ describe("App POST", () => {
             comment_id: 19,
             body: "spiffing cup of tea m'lady",
             article_id: 2,
-            author: 'icellusedkars',
+            author: "icellusedkars",
             votes: 0,
-            created_at: expect.any(String)
-          }
-          expect(comment).toEqual(expectedComment)
-        })
-    })
+            created_at: expect.any(String),
+          };
+          expect(comment).toEqual(expectedComment);
+        });
+    });
     test("should ignore any extra properties on inputted object", () => {
       const article_id = 1;
       return request(app)
@@ -376,3 +376,161 @@ describe("App POST", () => {
     });
   });
 });
+
+describe.only("App PATCH", () => {
+  describe("PATCH /api/articles/:article_id", () => {
+    test("should return updated article object with correct vote count", () => {
+      const article_id = 1;
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send({
+          inc_votes: 5,
+        })
+        .expect(201)
+        .then((response) => {
+          const body = response.body;
+          const expectedObj = {
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: 105,
+            article_img_url: expect.any(String),
+          };
+          expect(body.article).toMatchObject(expectedObj);
+
+        });
+    });
+    test("should return article object with new vote count if article did not previously have votes property", () => {
+      const article_id = 2;
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send({
+          inc_votes: 5,
+        })
+        .expect(201)
+        .then((response) => {
+          const body = response.body;
+          const expectedVotes = 5
+          const expectedObj = {
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: 5,
+            article_img_url: expect.any(String)
+          };
+          expect(body.article).toMatchObject(expectedObj);
+          expect(body.article).toHaveProperty("votes");
+          expect(body.article.votes).toEqual(expectedVotes);
+        });
+    });
+    test("should return article object with updated vote count if increment is negative", () => {
+      const article_id = 1;
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send({
+          inc_votes: -5,
+        })
+        .expect(201)
+        .then((response) => {
+          const body = response.body;
+          const expectedVotes = 95;
+          expect(body.article.votes).toEqual(expectedVotes);
+        });
+    });
+    test("should return updated vote count and ignore other keys on request body", () => {
+      const article_id = 1;
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send({
+          inc_votes: 5,
+          likes: 4,
+          favourite: "yes"
+        })
+        .expect(201)
+        .then((response) => {
+          const body = response.body;
+          const expectedObj = {
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: 105,
+            article_img_url: expect.any(String),
+          };
+          expect(body.article).toMatchObject(expectedObj);
+        });
+    });
+    test("should return article object with updated vote count if increment is negative and new vote count is below 0", () => {
+      const article_id = 2;
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send({
+          inc_votes: -5,
+        })
+        .expect(201)
+        .then((response) => {
+          const body = response.body;
+          const expectedVotes = -5;
+          expect(body.article.votes).toEqual(expectedVotes);
+        });
+    });
+    test("should return status 404 and error message if article does not exist", () => {
+      const article_id = 999099;
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send({
+          inc_votes: -5,
+        })
+        .expect(404)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toBe("not found")
+        });
+    });
+    test("should return status 400 and error message if article id is not a number", () => {
+      const article_id = "number 7";
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send({
+          inc_votes: -5,
+        })
+        .expect(400)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toBe("bad request")
+        });
+    });
+    test("should return status 400 and error message if inc_votes is not a number", () => {
+      const article_id = "number 6";
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send({
+          inc_votes: "number 4",
+        })
+        .expect(400)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toBe("bad request")
+        });
+    });
+    test("should return status 400 and error message if given an empty request body", () => {
+      const article_id = 1;
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send({})
+        .expect(400)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toBe("bad request")
+        });
+    });
+  });
+});
+
+
+// Remember to add a description of this endpoint to your /api endpoint.

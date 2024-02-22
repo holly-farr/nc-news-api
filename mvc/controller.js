@@ -4,6 +4,7 @@ const {
   readArticleById,
   readCommentsByArticleId,
   insertCommentByArticleId,
+  updateVotesByArticleId
 } = require("../mvc/model");
 const endpoints = require("../endpoints.json");
 
@@ -61,7 +62,17 @@ exports.postCommentByArticleId = (req, res, next) => {
     });
 };
 
-
+exports.patchVotesByArticleId = (req, res, next) => {
+  const article_id = req.params.article_id
+  const newVotes = req.body;
+  return Promise.all([readArticleById(article_id), updateVotesByArticleId(article_id, newVotes)])
+    .then((article) => {
+      res.status(201).send({ article: article[1] });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
 exports.getAllEndpoints = (req, res) => {
   res.status(200).send({ endpoints: endpoints });
