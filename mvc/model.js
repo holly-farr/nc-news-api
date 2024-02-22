@@ -35,7 +35,7 @@ exports.readArticleById = (article_id) => {
       if (rows.length === 0) {
         return Promise.reject({
           status: 404,
-          msg: `no article found for article_id: ${article_id}`,
+          msg: "not found",
         });
       }
       return rows;
@@ -49,12 +49,7 @@ exports.readCommentsByArticleId = (article_id) => {
       [article_id]
     )
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: `no comments found for article_id: ${article_id}`,
-        });
-      }
+
       return rows;
     });
 };

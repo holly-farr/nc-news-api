@@ -9,7 +9,7 @@ const { toBeSorted, toBeSortedBy } = require("jest-sorted");
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
-describe("App", () => {
+describe("App GET", () => {
   describe("GET /api/topics", () => {
     test("should return 200 status", () => {
       return request(app).get("/api/topics").expect(200);
@@ -138,7 +138,7 @@ describe("App", () => {
         .expect(404)
         .then((response) => {
           const body = response.body;
-          expect(body.msg).toBe("no article found for article_id: 9999999");
+          expect(body.msg).toBe("not found");
         });
     });
   });
@@ -196,46 +196,29 @@ describe("App", () => {
         });
     });
   });
-  describe("GET /api/articles/:article_id/comments", () => {
-    test("should return array of comment objects", () => {
+  describe.only("GET /api/articles/:article_id/comments", () => {
+    test("should return array of comment objects with correct article id and properties", () => {
       const article_id = 1;
       return request(app)
         .get(`/api/articles/${article_id}/comments`)
         .expect(200)
         .then((response) => {
-          const body = response.body;
-          expect(Array.isArray(body.comments)).toBe(true);
-          expect(body.comments.length).toBe(11);
-        });
-    });
-    test("should return array of comment objects with correct article id", () => {
-      const article_id = 1;
-      return request(app)
-        .get(`/api/articles/${article_id}/comments`)
-        .expect(200)
-        .then((response) => {
-          const body = response.body;
-          body.comments.forEach((comment) => {
+          const commentsArr = response.body.comments;
+          const expectedObj = {
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: 1,
+          };
+
+          expect(Array.isArray(commentsArr)).toBe(true);
+          expect(commentsArr.length).toBe(11);
+
+          commentsArr.forEach((comment) => {
             expect(comment.article_id).toBe(1);
-          });
-        });
-    });
-    test("should return comment object with correct properties", () => {
-      const article_id = 1;
-      return request(app)
-        .get(`/api/articles/${article_id}/comments`)
-        .expect(200)
-        .then((response) => {
-          const body = response.body;
-          body.comments.forEach((comment) => {
-            expect(comment).toMatchObject({
-              comment_id: expect.any(Number),
-              votes: expect.any(Number),
-              created_at: expect.any(String),
-              author: expect.any(String),
-              body: expect.any(String),
-              article_id: expect.any(Number),
-            });
+            expect(comment).toMatchObject(expectedObj);
           });
         });
     });
@@ -261,14 +244,24 @@ describe("App", () => {
           expect(body.msg).toBe("bad request");
         });
     });
-    test("should return 404 status and custom error message if article exists and has no comments", () => {
+    test("should return empty array if article exists and has no comments", () => {
       const article_id = 7;
+      return request(app)
+        .get(`/api/articles/${article_id}/comments`)
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          expect(body.comments).toEqual([]);
+        });
+    });
+    test("should return 404 status and error message if article does not exist", () => {
+      const article_id = 90999;
       return request(app)
         .get(`/api/articles/${article_id}/comments`)
         .expect(404)
         .then((response) => {
           const body = response.body;
-          expect(body.msg).toBe("no comments found for article_id: 7");
+          expect(body.msg).toEqual("not found");
         });
     });
   });
