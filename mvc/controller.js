@@ -3,6 +3,7 @@ const {
   readAllArticles,
   readArticleById,
   readCommentsByArticleId,
+  insertCommentByArticleId,
 } = require("../mvc/model");
 const endpoints = require("../endpoints.json");
 
@@ -39,9 +40,9 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const article_id = req.params.article_id;
-  readCommentsByArticleId(article_id)
+  return Promise.all([readArticleById(article_id), readCommentsByArticleId(article_id)])
     .then((comments) => {
-      res.status(200).send({ comments: comments });
+      res.status(200).send({ comments: comments[1] });
     })
     .catch((err) => {
       next(err);

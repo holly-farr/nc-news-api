@@ -6,8 +6,15 @@ const {
   getAllArticles,
   getArticleById,
   getCommentsByArticleId,
+  postCommentByArticleId,
 } = require("../mvc/controller");
-const { psqlErrors, serverErrors, customErrors } = require("../mvc/middleware");
+const {
+  psqlErrors,
+  serverErrors,
+  customErrors,
+} = require("../mvc/middleware");
+
+app.use(express.json());
 
 app.get("/api", getAllEndpoints);
 
@@ -19,7 +26,7 @@ app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
-app.use("/*", (req, res) => {
+app.all("/*", (req, res) => {
   res.status(404).send({ msg: "path not found" });
 });
 
