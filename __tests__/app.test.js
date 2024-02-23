@@ -265,6 +265,42 @@ describe("App GET", () => {
         });
     });
   });
+  describe("GET /api/users", () => {
+    test("should return array containing all user objects", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          expect(Array.isArray(body.users)).toBe(true);
+          expect(body.users.length).toBe(4);
+        });
+    });
+    test("user objects should have correct keys and correct data types for keys", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          body.users.forEach((user) => {
+            expect(user).toMatchObject({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String)
+            });
+          });
+        });
+    });
+    test("should return 404 status and 'path not found' message if url is inputted incorrectly", () => {
+      return request(app)
+        .get("/api/users123")
+        .expect(404)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toBe("path not found")
+        });
+    });
+  });
 });
 
 describe("App POST", () => {

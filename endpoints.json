@@ -9,6 +9,17 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": [
+      {
+        "username": "butter_bridge",
+        "name": "jonny",
+        "avatar_url": "Image url.."
+      }
+    ]
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
@@ -70,7 +81,10 @@
   },
   "POST /api/articles/:article_id/comments": {
     "description": "serves new user comment for a specified article when provided with an article id, username and body",
-    "queries": [ 1, { "username": "icellusedkars", "body": "spiffing cup of tea m'lady" } ],
+    "queries": [
+      1,
+      { "username": "icellusedkars", "body": "spiffing cup of tea m'lady" }
+    ],
     "exampleResponse": {
       "comment_id": 19,
       "body": "spiffing cup of tea m'lady",
@@ -82,7 +96,7 @@
   },
   "PATCH /api/articles/:article_id": {
     "description": "serves article with updated vote count when provided with article id and increment vote",
-    "queries": [ 1, { "inc_vote": 5} ],
+    "queries": [1, { "inc_vote": 5 }],
     "exampleResponse": {
       "title": "Living in the shadow of a great man",
       "topic": "mitch",
@@ -95,7 +109,7 @@
   },
   "DELETE /api/comments/:comment_id": {
     "description": "deletes comment and serves 204 status when provided with comment_id",
-    "queries": [ 2 ],
+    "queries": [2],
     "exampleResponse": "204 no content"
   }
 }
