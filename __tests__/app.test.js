@@ -196,6 +196,86 @@ describe("App GET", () => {
         });
     });
   });
+  describe("GET /api/articles?topic=topic_query", () => {
+    test("should return array of article objects with correct topic when provided with topic query", () => {
+      const topic = "cats";
+      return request(app)
+        .get(`/api/articles?topic=${topic}`)
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          const expectedArr = [
+            {
+              author: "rogersop",
+              article_id: 5,
+              title: "UNCOVERED: catspiracy to bring down democracy",
+              topic: "cats",
+              created_at: "2020-08-03T13:14:00.000Z",
+              votes: 0,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              comment_count: 2,
+            },
+          ];
+          expect(body.articles).toMatchObject(expectedArr);
+          expect(body.articles.length).toBe(1);
+          expect(Array.isArray(body.articles)).toBe(true);
+        });
+    });
+    test("should return article objects with correct topic and properties", () => {
+      const topic = "mitch";
+      return request(app)
+        .get(`/api/articles?topic=${topic}`)
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          body.articles.forEach((article) => {
+            expect(article).toMatchObject({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: "mitch",
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+    test("should return array of all articles when not provided with a topic", () => {
+      const topic = "";
+      return request(app)
+        .get(`/api/articles?topic=${topic}`)
+        .expect(200)
+        .then((response) => {
+          const body = response.body;
+          body.articles.forEach((article) => {
+            expect(article).toMatchObject({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(Number),
+            });
+          });
+          expect(body.articles.length).toBe(13);
+        });
+    });
+    test("should return a 404 status and 'not found' message if topic does not exist", () => {
+      const topic = "dogs";
+      return request(app)
+        .get(`/api/articles?topic=${topic}`)
+        .expect(404)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toBe("not found");
+        });
+    });
+  });
   describe("GET /api/articles/:article_id/comments", () => {
     test("should return array of comment objects with correct article id and properties", () => {
       const article_id = 1;
@@ -286,7 +366,7 @@ describe("App GET", () => {
             expect(user).toMatchObject({
               username: expect.any(String),
               name: expect.any(String),
-              avatar_url: expect.any(String)
+              avatar_url: expect.any(String),
             });
           });
         });
@@ -297,7 +377,7 @@ describe("App GET", () => {
         .expect(404)
         .then((response) => {
           const body = response.body;
-          expect(body.msg).toBe("path not found")
+          expect(body.msg).toBe("path not found");
         });
     });
   });
@@ -571,9 +651,7 @@ describe("App DELETE", () => {
   describe("DELETE /api/comments/:comment_id", () => {
     test("should delete comment and return 204 status", () => {
       const comment_id = 2;
-      return request(app)
-      .delete(`/api/comments/${comment_id}`)
-      .expect(204)
+      return request(app).delete(`/api/comments/${comment_id}`).expect(204);
     });
     test("should return status 404 and error message if given comment_id which doesn't exist", () => {
       const comment_id = 90999;
