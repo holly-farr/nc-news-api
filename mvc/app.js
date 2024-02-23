@@ -7,7 +7,8 @@ const {
   getArticleById,
   getCommentsByArticleId,
   postCommentByArticleId,
-  patchVotesByArticleId
+  patchVotesByArticleId,
+  deleteCommentById
 } = require("../mvc/controller");
 const {
   psqlErrors,
@@ -30,6 +31,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.patch("/api/articles/:article_id", patchVotesByArticleId)
+
+app.delete("/api/comments/:comment_id", deleteCommentById)
 
 
 app.all("/*", (req, res) => {
