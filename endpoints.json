@@ -92,5 +92,10 @@
       "votes": 105,
       "article_img_url": "Image url.."
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes comment and serves 204 status when provided with comment_id",
+    "queries": [ 2 ],
+    "exampleResponse": "204 no content"
   }
 }

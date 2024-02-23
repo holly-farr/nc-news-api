@@ -377,7 +377,7 @@ describe("App POST", () => {
   });
 });
 
-describe.only("App PATCH", () => {
+describe("App PATCH", () => {
   describe("PATCH /api/articles/:article_id", () => {
     test("should return updated article object with correct vote count", () => {
       const article_id = 1;
@@ -399,7 +399,6 @@ describe.only("App PATCH", () => {
             article_img_url: expect.any(String),
           };
           expect(body.article).toMatchObject(expectedObj);
-
         });
     });
     test("should return article object with new vote count if article did not previously have votes property", () => {
@@ -412,7 +411,7 @@ describe.only("App PATCH", () => {
         .expect(201)
         .then((response) => {
           const body = response.body;
-          const expectedVotes = 5
+          const expectedVotes = 5;
           const expectedObj = {
             title: expect.any(String),
             topic: expect.any(String),
@@ -420,7 +419,7 @@ describe.only("App PATCH", () => {
             body: expect.any(String),
             created_at: expect.any(String),
             votes: 5,
-            article_img_url: expect.any(String)
+            article_img_url: expect.any(String),
           };
           expect(body.article).toMatchObject(expectedObj);
           expect(body.article).toHaveProperty("votes");
@@ -448,7 +447,7 @@ describe.only("App PATCH", () => {
         .send({
           inc_votes: 5,
           likes: 4,
-          favourite: "yes"
+          favourite: "yes",
         })
         .expect(201)
         .then((response) => {
@@ -489,7 +488,7 @@ describe.only("App PATCH", () => {
         .expect(404)
         .then((response) => {
           const body = response.body;
-          expect(body.msg).toBe("not found")
+          expect(body.msg).toBe("not found");
         });
     });
     test("should return status 400 and error message if article id is not a number", () => {
@@ -502,7 +501,7 @@ describe.only("App PATCH", () => {
         .expect(400)
         .then((response) => {
           const body = response.body;
-          expect(body.msg).toBe("bad request")
+          expect(body.msg).toBe("bad request");
         });
     });
     test("should return status 400 and error message if inc_votes is not a number", () => {
@@ -515,7 +514,7 @@ describe.only("App PATCH", () => {
         .expect(400)
         .then((response) => {
           const body = response.body;
-          expect(body.msg).toBe("bad request")
+          expect(body.msg).toBe("bad request");
         });
     });
     test("should return status 400 and error message if given an empty request body", () => {
@@ -526,11 +525,39 @@ describe.only("App PATCH", () => {
         .expect(400)
         .then((response) => {
           const body = response.body;
-          expect(body.msg).toBe("bad request")
+          expect(body.msg).toBe("bad request");
         });
     });
   });
 });
 
-
-// Remember to add a description of this endpoint to your /api endpoint.
+describe("App DELETE", () => {
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("should delete comment and return 204 status", () => {
+      const comment_id = 2;
+      return request(app)
+      .delete(`/api/comments/${comment_id}`)
+      .expect(204)
+    });
+    test("should return status 404 and error message if given comment_id which doesn't exist", () => {
+      const comment_id = 90999;
+      return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(404)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toEqual("not found");
+        });
+    });
+    test("should return status 400 and 'bad request' message if given invalid comment id", () => {
+      const comment_id = "hello9";
+      return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(400)
+        .then((response) => {
+          const body = response.body;
+          expect(body.msg).toBe("bad request");
+        });
+    });
+  });
+});

@@ -4,7 +4,9 @@ const {
   readArticleById,
   readCommentsByArticleId,
   insertCommentByArticleId,
-  updateVotesByArticleId
+  updateVotesByArticleId,
+  deleteCommentInDB,
+  readCommentByCommentId,
 } = require("../mvc/model");
 const endpoints = require("../endpoints.json");
 
@@ -41,7 +43,10 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const article_id = req.params.article_id;
-  return Promise.all([readArticleById(article_id), readCommentsByArticleId(article_id)])
+  return Promise.all([
+    readArticleById(article_id),
+    readCommentsByArticleId(article_id),
+  ])
     .then((comments) => {
       res.status(200).send({ comments: comments[1] });
     })
@@ -51,9 +56,12 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.postCommentByArticleId = (req, res, next) => {
-  const article_id = req.params.article_id
+  const article_id = req.params.article_id;
   const newComment = req.body;
-  return Promise.all([readArticleById(article_id), insertCommentByArticleId(article_id, newComment)])
+  return Promise.all([
+    readArticleById(article_id),
+    insertCommentByArticleId(article_id, newComment),
+  ])
     .then((comment) => {
       res.status(201).send({ comment: comment[1] });
     })
@@ -63,15 +71,28 @@ exports.postCommentByArticleId = (req, res, next) => {
 };
 
 exports.patchVotesByArticleId = (req, res, next) => {
-  const article_id = req.params.article_id
+  const article_id = req.params.article_id;
   const newVotes = req.body;
-  return Promise.all([readArticleById(article_id), updateVotesByArticleId(article_id, newVotes)])
+  return Promise.all([
+    readArticleById(article_id),
+    updateVotesByArticleId(article_id, newVotes),
+  ])
     .then((article) => {
       res.status(201).send({ article: article[1] });
     })
     .catch((err) => {
       next(err);
     });
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const comment_id = req.params.comment_id;
+    deleteCommentInDB(comment_id).then(()=>{
+      res.status(204).send()
+    })
+    .catch((err)=>{
+      next(err)
+    })
 };
 
 exports.getAllEndpoints = (req, res) => {
