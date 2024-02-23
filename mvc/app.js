@@ -6,6 +6,7 @@ const {
   getAllArticles,
   getArticleById,
   getCommentsByArticleId,
+  getAllUsers,
   postCommentByArticleId,
   patchVotesByArticleId,
   deleteCommentById
@@ -27,6 +28,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.get("/api/users", getAllUsers)
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 

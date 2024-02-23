@@ -28,6 +28,12 @@ exports.readAllArticles = () => {
     });
 };
 
+exports.readAllUsers = () => {
+  return db.query("SELECT * FROM users").then(({ rows }) => {
+    return rows;
+  });
+};
+
 exports.readArticleById = (article_id) => {
   return db
     .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
@@ -78,12 +84,11 @@ exports.updateVotesByArticleId = (article_id, newVotes) => {
 };
 
 exports.deleteCommentInDB = (comment_id) => {
- return db.query("DELETE FROM comments WHERE comment_id = $1;", [
-    comment_id,
-  ])
-  .then((response)=>{
-    if(response.rowCount === 0){
-      return Promise.reject({status: 404, msg: "not found"})}
-  })
+  return db
+    .query("DELETE FROM comments WHERE comment_id = $1;", [comment_id])
+    .then((response) => {
+      if (response.rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+    });
 };
-

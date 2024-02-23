@@ -3,10 +3,10 @@ const {
   readAllArticles,
   readArticleById,
   readCommentsByArticleId,
+  readAllUsers,
   insertCommentByArticleId,
   updateVotesByArticleId,
   deleteCommentInDB,
-  readCommentByCommentId,
 } = require("../mvc/model");
 const endpoints = require("../endpoints.json");
 
@@ -54,6 +54,16 @@ exports.getCommentsByArticleId = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getAllUsers = (req, res, next) => {
+  readAllUsers()
+    .then((users) => {
+      res.status(200).send({ users: users });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
 
 exports.postCommentByArticleId = (req, res, next) => {
   const article_id = req.params.article_id;
