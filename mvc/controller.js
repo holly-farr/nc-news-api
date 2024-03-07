@@ -33,7 +33,8 @@ exports.getAllArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const article_id = req.params.article_id;
-  readArticleById(article_id)
+  const comment_count = req.query.comment_count
+  readArticleById(article_id, comment_count)
     .then((article) => {
       res.status(200).send({ article: article });
     })
