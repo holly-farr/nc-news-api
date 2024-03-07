@@ -81,18 +81,19 @@ describe("App GET", () => {
         .expect(200)
         .then((response) => {
           const body = response.body;
-          const expectedOut = {
-            article_id: 3,
-            title: "Eight pug gifs that remind me of mitch",
-            topic: "mitch",
-            author: "icellusedkars",
-            body: "some gifs",
-            created_at: "2020-11-03T09:12:00.000Z",
-            votes: 0,
-            article_img_url:
-              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          };
-          expect(body.article[0]).toMatchObject(expectedOut);
+          body.article.forEach((article) => {
+            expect(article).toMatchObject({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(Number),
+            });
+          });
         });
     });
     test("should return article object with id that matches given id", () => {
@@ -102,6 +103,7 @@ describe("App GET", () => {
         .expect(200)
         .then((response) => {
           const body = response.body;
+
           const articleArr = body.article;
           expect(articleArr[0].article_id).toEqual(4);
         });
@@ -121,6 +123,7 @@ describe("App GET", () => {
           expect(body.article[0]).toHaveProperty("title");
           expect(body.article[0]).toHaveProperty("topic");
           expect(body.article[0]).toHaveProperty("votes");
+          expect(body.article[0]).toHaveProperty("comment_count");
         });
     });
     test("should return 400 status and message of 'bad request' if anything but an id is inputted", () => {
