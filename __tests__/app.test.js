@@ -20,7 +20,6 @@ describe("App GET", () => {
         .expect(200)
         .then((response) => {
           const body = response.body;
-          expect(Array.isArray(["body.topics"])).toBe(true);
           expect(typeof body.topics[0]).toBe("object");
         });
     });
@@ -152,7 +151,6 @@ describe("App GET", () => {
         .expect(200)
         .then((response) => {
           const body = response.body;
-          expect(Array.isArray(body.articles)).toBe(true);
           expect(body.articles.length).toBe(13);
         });
     });
@@ -222,7 +220,6 @@ describe("App GET", () => {
           ];
           expect(body.articles).toMatchObject(expectedArr);
           expect(body.articles.length).toBe(1);
-          expect(Array.isArray(body.articles)).toBe(true);
         });
     });
     test("should return article objects with correct topic and properties", () => {
@@ -232,6 +229,9 @@ describe("App GET", () => {
         .expect(200)
         .then((response) => {
           const body = response.body;
+
+          expect(body.articles.length).toBe(12);
+
           body.articles.forEach((article) => {
             expect(article).toMatchObject({
               author: expect.any(String),
@@ -296,7 +296,6 @@ describe("App GET", () => {
             article_id: 1,
           };
 
-          expect(Array.isArray(commentsArr)).toBe(true);
           expect(commentsArr.length).toBe(11);
 
           commentsArr.forEach((comment) => {
@@ -355,7 +354,6 @@ describe("App GET", () => {
         .expect(200)
         .then((response) => {
           const body = response.body;
-          expect(Array.isArray(body.users)).toBe(true);
           expect(body.users.length).toBe(4);
         });
     });
@@ -505,7 +503,7 @@ describe("App PATCH", () => {
         .send({
           inc_votes: 5,
         })
-        .expect(201)
+        .expect(200)
         .then((response) => {
           const body = response.body;
           const expectedObj = {
@@ -527,7 +525,7 @@ describe("App PATCH", () => {
         .send({
           inc_votes: 5,
         })
-        .expect(201)
+        .expect(200)
         .then((response) => {
           const body = response.body;
           const expectedVotes = 5;
@@ -552,7 +550,7 @@ describe("App PATCH", () => {
         .send({
           inc_votes: -5,
         })
-        .expect(201)
+        .expect(200)
         .then((response) => {
           const body = response.body;
           const expectedVotes = 95;
@@ -568,7 +566,7 @@ describe("App PATCH", () => {
           likes: 4,
           favourite: "yes",
         })
-        .expect(201)
+        .expect(200)
         .then((response) => {
           const body = response.body;
           const expectedObj = {
@@ -590,7 +588,7 @@ describe("App PATCH", () => {
         .send({
           inc_votes: -5,
         })
-        .expect(201)
+        .expect(200)
         .then((response) => {
           const body = response.body;
           const expectedVotes = -5;

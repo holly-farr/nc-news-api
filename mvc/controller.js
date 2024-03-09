@@ -21,7 +21,7 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  const topic = req.query.topic
+  const topic = req.query.topic;
   readAllArticles(topic)
     .then((articles) => {
       res.status(200).send({ articles: articles });
@@ -33,7 +33,7 @@ exports.getAllArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const article_id = req.params.article_id;
-  const comment_count = req.query.comment_count
+  const comment_count = req.query.comment_count;
   readArticleById(article_id, comment_count)
     .then((article) => {
       res.status(200).send({ article: article });
@@ -65,7 +65,7 @@ exports.getAllUsers = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
-}
+};
 
 exports.postCommentByArticleId = (req, res, next) => {
   const article_id = req.params.article_id;
@@ -90,7 +90,7 @@ exports.patchVotesByArticleId = (req, res, next) => {
     updateVotesByArticleId(article_id, newVotes),
   ])
     .then((article) => {
-      res.status(201).send({ article: article[1] });
+      res.status(200).send({ article: article[1] });
     })
     .catch((err) => {
       next(err);
@@ -99,12 +99,13 @@ exports.patchVotesByArticleId = (req, res, next) => {
 
 exports.deleteCommentById = (req, res, next) => {
   const comment_id = req.params.comment_id;
-    deleteCommentInDB(comment_id).then(()=>{
-      res.status(204).send()
+  deleteCommentInDB(comment_id)
+    .then(() => {
+      res.status(204).send();
     })
-    .catch((err)=>{
-      next(err)
-    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getAllEndpoints = (req, res) => {

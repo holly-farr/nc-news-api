@@ -9,13 +9,9 @@ const {
   getAllUsers,
   postCommentByArticleId,
   patchVotesByArticleId,
-  deleteCommentById
+  deleteCommentById,
 } = require("../mvc/controller");
-const {
-  psqlErrors,
-  serverErrors,
-  customErrors,
-} = require("../mvc/middleware");
+const { psqlErrors, serverErrors, customErrors } = require("../mvc/middleware");
 
 app.use(express.json());
 
@@ -29,14 +25,13 @@ app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
-app.get("/api/users", getAllUsers)
+app.get("/api/users", getAllUsers);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
-app.patch("/api/articles/:article_id", patchVotesByArticleId)
+app.patch("/api/articles/:article_id", patchVotesByArticleId);
 
-app.delete("/api/comments/:comment_id", deleteCommentById)
-
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "path not found" });

@@ -44,7 +44,8 @@ exports.readAllUsers = () => {
 
 exports.readArticleById = (article_id) => {
   return db
-    .query(`SELECT 
+    .query(
+      `SELECT 
     articles.author, 
     articles.article_id,
     articles.title,
@@ -57,7 +58,9 @@ exports.readArticleById = (article_id) => {
     FROM articles 
     LEFT JOIN comments ON comments.article_id = articles.article_id 
     WHERE articles.article_id = $1
-    GROUP BY articles.article_id ORDER BY created_at DESC;`, [article_id])
+    GROUP BY articles.article_id ORDER BY created_at DESC;`,
+      [article_id]
+    )
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({
