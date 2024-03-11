@@ -4,7 +4,7 @@
 
 Northcoders News API is a project that mimics a real world backend service, which can access application data programmatically and provide it to front end architecture. 
 
-## Setting up the local repository
+## Set up the local repository
 Clone the repository (HTTPS) and navigate to the project directory:
 ```js
   git clone https://github.com/holly-farr/nc-news-api.git
