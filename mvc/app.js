@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require("express");
 const app = express();
 const {
@@ -12,6 +13,8 @@ const {
   deleteCommentById,
 } = require("../mvc/controller");
 const { psqlErrors, serverErrors, customErrors } = require("../mvc/middleware");
+
+app.use(cors());
 
 app.use(express.json());
 
